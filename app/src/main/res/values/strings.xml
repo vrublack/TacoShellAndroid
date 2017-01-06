@@ -1,6 +1,13 @@
 <resources>
     <string name="app_name">TacoShell</string>
-    <string name="loading_db">Loading DB...</string>
+    <string name="loading_db">Loading DB…</string>
+    <string name="loading_uga">Scraping UGA website…</string>
     <string name="search_hint">Search food</string>
     <string name="search_title">Search for foods</string>
+
+    <string-array name="datasources">
+        <item>USDA</item>
+        <item>UGA</item>
+    </string-array>
+
 </resources>

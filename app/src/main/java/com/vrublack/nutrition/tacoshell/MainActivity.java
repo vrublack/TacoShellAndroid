@@ -9,12 +9,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.vrublack.nutrition.core.Formatter;
 import com.vrublack.nutrition.core.PercentileScale;
 import com.vrublack.nutrition.core.SearchResultItem;
+import com.vrublack.nutrition.core.SyncFoodDataSource;
 import com.vrublack.nutrition.core.TextMatrix;
+import com.vrublack.nutrition.core.uga.UGAFoodServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,21 +30,28 @@ import java.util.List;
 public class MainActivity extends Activity
 {
 
-    private AndroidUSDADatabase db;
+    private SyncFoodDataSource dataSource;
 
     private List<SearchResultItem> queryResult;
     private boolean queryRunning;
+    private boolean showingList = false;
 
     private RecyclerView mRecyclerView;
     private FoodListAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private ViewSwitcher switcher;
+    private TextView statusView;
+    private SearchView searchView;
+    private Spinner datasourceSpinner;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
+
+        switcher = (ViewSwitcher) findViewById(R.id.switcher);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
@@ -52,7 +67,33 @@ public class MainActivity extends Activity
         mAdapter = new FoodListAdapter(new ArrayList<SearchResultItem>());
         mRecyclerView.setAdapter(mAdapter);
 
-        new LoadDBTask().execute();
+        statusView = (TextView) findViewById(R.id.status);
+
+        datasourceSpinner = (Spinner) findViewById(R.id.spinner);
+
+        datasourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                if (position == 0)
+                {
+                    statusView.setText(getString(R.string.loading_db));
+                    new LoadDBTask().execute();
+                }
+                else
+                {
+                    statusView.setText(getString(R.string.loading_uga));
+                    new LoadUGATask().execute();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
     }
 
 
@@ -92,7 +133,7 @@ public class MainActivity extends Activity
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView =
+        searchView =
                 (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
@@ -102,19 +143,25 @@ public class MainActivity extends Activity
             @Override
             public boolean onQueryTextSubmit(String query)
             {
-                System.out.println("Submit");
+                hideKeyboard();
                 return true;
             }
 
             @Override
             public boolean onQueryTextChange(String s)
             {
-                System.out.println("Update");
+                if (s.length() == 0)
+                    return false;
 
-                if (s.length() != 0) {
-                    if (!queryRunning) {
-                        new QueryTask().execute(s);
-                    }
+                if (!showingList)
+                {
+                    showingList = true;
+                    switcher.setDisplayedChild(1);
+                }
+
+                if (!queryRunning)
+                {
+                    new QueryTask().execute(s);
                 }
 
                 return true;
@@ -123,6 +170,29 @@ public class MainActivity extends Activity
 
         return true;
     }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (showingList)
+        {
+            switcher.setDisplayedChild(0);
+            showingList = false;
+        }
+
+        super.onBackPressed();
+    }
+
+    private void hideKeyboard()
+    {
+        View view = this.getCurrentFocus();
+        if (view != null)
+        {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
     private class LoadDBTask extends AsyncTask<Void, Long, Long>
     {
@@ -133,7 +203,7 @@ public class MainActivity extends Activity
         {
             long start = System.nanoTime();
             final float interval = 0.05f;
-            db = AndroidUSDADatabase.newDatabase(getResources(), new Runnable()
+            dataSource = AndroidUSDADatabase.newDatabase(getResources(), new Runnable()
             {
                 @Override
                 public void run()
@@ -149,19 +219,20 @@ public class MainActivity extends Activity
 
         protected void onPostExecute(Long result)
         {
-            // statusView.setText("DB loaded after " + result / 1000000 + " ms");
+            statusView.setText("DB loaded after " + result / 1000000 + " ms");
 
+            /*
             int iterations = 10;
             long totalTime = 0;
             for (int i = 0; i < iterations; i++)
             {
                 long start = System.nanoTime();
-                List<SearchResultItem> resultItems = db.search("tomato sauce");
+                List<SearchResultItem> resultItems = dataSource.search("tomato sauce");
                 totalTime += System.nanoTime() - start;
             }
             // statusView.setText("Query completed in " + totalTime / (1000000 * iterations) + " ms");
 
-            new QueryTask().execute("apple sauce");
+            new QueryTask().execute("apple sauce");*/
         }
 
         @Override
@@ -169,8 +240,29 @@ public class MainActivity extends Activity
         {
             super.onProgressUpdate(values);
 
-            // statusView.setText(values[0] + " % loaded");
+            statusView.setText(values[0] + " % loaded");
         }
+    }
+
+    private class LoadUGATask extends AsyncTask<Void, Long, Long>
+    {
+        private long progress = 0;
+
+        @Override
+        protected Long doInBackground(Void... params)
+        {
+            long start = System.nanoTime();
+            final float interval = 0.05f;
+            dataSource = new UGAFoodServices();
+            return System.nanoTime() - start;
+        }
+
+
+        protected void onPostExecute(Long result)
+        {
+            statusView.setText("UGA datasource loaded after " + result / 1000000 + " ms");
+        }
+
     }
 
     private class QueryTask extends AsyncTask<String, Void, Void>
@@ -179,7 +271,7 @@ public class MainActivity extends Activity
         protected Void doInBackground(String... params)
         {
             queryRunning = true;
-            queryResult = db.search(params[0]);
+            queryResult = dataSource.search(params[0]);
             queryRunning = false;
             return null;
         }
