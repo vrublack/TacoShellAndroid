@@ -30,13 +30,15 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     {
         public TextView description;
         public TextView details;
+        public MacroNutrientChart chart;
 
-        public ViewHolder(View itemView, TextView description, TextView details)
+        public ViewHolder(View itemView, TextView description, TextView details, MacroNutrientChart chart)
         {
             super(itemView);
 
             this.description = description;
             this.details = details;
+            this.chart = chart;
         }
     }
 
@@ -57,7 +59,7 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
 
 
         return new ViewHolder(v, (TextView) v.findViewById(R.id.description),
-                (TextView) v.findViewById(R.id.details));
+                (TextView) v.findViewById(R.id.details), (MacroNutrientChart) v.findViewById(R.id.chart));
     }
 
     // Replace the contents of a view (invoked by the layout manager)
@@ -66,8 +68,35 @@ public class FoodListAdapter extends RecyclerView.Adapter<FoodListAdapter.ViewHo
     {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        holder.description.setText(items.get(position).getDescription());
-        holder.details.setText(items.get(position).getNutritionInformation());
+        SearchResultItem item = items.get(position);
+        holder.description.setText(item.getDescription());
+        holder.details.setText(item.getNutritionInformation());
+        float[] breakdown = parseMacroBreakdown(item.getNutritionInformation());
+        holder.chart.setBreakdown(breakdown[0], breakdown[1], breakdown[2]);
+    }
+
+    // this is a bit dirty but several changes had to be made to the core library to allow
+    // retrieval of the values themselves
+    private float[] parseMacroBreakdown(String nutritionInformation)
+    {
+        // Per 342g - Calories: 835kcal | Fat: 32.28g | Carbs: 105.43g | Protein: 29.41g
+        float[] breakdown = new float[3];
+        String fat = "Fat: ";
+        String carbs = "Carbs: ";
+        String protein = "Protein: ";
+        int fatIndex = nutritionInformation.indexOf(fat) + fat.length();
+        breakdown[1] = Float.parseFloat(nutritionInformation.substring(fatIndex,
+                nutritionInformation.indexOf('g', fatIndex)));
+
+        int carbsIndex = nutritionInformation.indexOf(carbs) + carbs.length();
+        breakdown[0] = Float.parseFloat(nutritionInformation.substring(carbsIndex,
+                nutritionInformation.indexOf('g', carbsIndex)));
+
+        int proteinIndex = nutritionInformation.indexOf(protein) + protein.length();
+        breakdown[2] = Float.parseFloat(nutritionInformation.substring(proteinIndex,
+                nutritionInformation.indexOf('g', proteinIndex)));
+
+        return breakdown;
     }
 
     // Return the size of your dataset (invoked by the layout manager)

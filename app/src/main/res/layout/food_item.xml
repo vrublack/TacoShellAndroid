@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:card_view="http://schemas.android.com/apk/res-auto"
-              android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent">
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
-        android:layout_gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="100dp"
+        android:layout_gravity="center"
         android:layout_margin="5dp"
         card_view:cardCornerRadius="2dp"
         card_view:contentPadding="10dp">
@@ -18,19 +18,27 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
+            <com.vrublack.nutrition.tacoshell.MacroNutrientChart
+                android:id="@+id/chart"
+                android:layout_width="80dp"
+                android:layout_height="80dp"/>
+
             <TextView
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_alignParentTop="true"/>
+                android:layout_alignParentTop="true"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/chart"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_below="@+id/description"/>
+                android:layout_below="@+id/description"
+                android:layout_marginLeft="20dp"
+                android:layout_toRightOf="@+id/chart"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 

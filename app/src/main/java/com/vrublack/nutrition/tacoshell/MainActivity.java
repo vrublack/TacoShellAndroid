@@ -29,7 +29,6 @@ import java.util.List;
 
 public class MainActivity extends Activity
 {
-
     private SyncFoodDataSource dataSource;
 
     private List<SearchResultItem> queryResult;
