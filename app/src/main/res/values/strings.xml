@@ -4,6 +4,26 @@
     <string name="loading_uga">Scraping UGA website…</string>
     <string name="search_hint">Search food</string>
     <string name="search_title">Search for foods</string>
+    <string name="instructions"><![CDATA[
+            <h3>Help</h3>
+
+                You can type in the following into the search bar:
+
+                <ul>
+
+                <li>Name of a food item (duh)</li>
+                <br/>
+                <li>Name of a dining hall (if selected UGA)</li>
+                <br/>
+                <li><span style=\"font-style: italic;\">{high, low} x {calories, carbs, fat, protein, fiber}</span>, for example \"high protein\".
+                The items will then be sorted by that criterion.</li>
+
+                </ul>
+
+                The pie chart shows the percentage of <span style=\"color: #30408d\">carbs</span>,
+                <span style=\"color: #84b501\">fat</span> and <span style=\"color: #d25310\">protein</span>
+
+    ]]></string>
 
     <string-array name="datasources">
         <item>USDA</item>

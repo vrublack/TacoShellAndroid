@@ -3,6 +3,7 @@ package com.vrublack.nutrition.tacoshell;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,7 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
 import android.widget.AdapterView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -42,6 +45,7 @@ public class MainActivity extends Activity
     private TextView statusView;
     private SearchView searchView;
     private Spinner datasourceSpinner;
+    private ProgressBar progressBar;
 
 
     @Override
@@ -78,11 +82,13 @@ public class MainActivity extends Activity
                 if (position == 0)
                 {
                     statusView.setText(getString(R.string.loading_db));
+                    progressBar.setVisibility(ProgressBar.VISIBLE);
                     new LoadDBTask().execute();
                 }
                 else
                 {
                     statusView.setText(getString(R.string.loading_uga));
+                    progressBar.setVisibility(ProgressBar.VISIBLE);
                     new LoadUGATask().execute();
                 }
             }
@@ -93,6 +99,15 @@ public class MainActivity extends Activity
 
             }
         });
+
+        WebView instructions = (WebView) findViewById(R.id.instructions);
+        instructions.setVerticalScrollBarEnabled(false);
+        instructions.setBackgroundColor(Color.TRANSPARENT);
+        String text = getResources().getString(R.string.instructions);
+        System.out.println(text);
+        instructions.loadData(text, "text/html", null);
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
 
@@ -220,6 +235,8 @@ public class MainActivity extends Activity
         {
             statusView.setText("DB loaded after " + result / 1000000 + " ms");
 
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
+
             /*
             int iterations = 10;
             long totalTime = 0;
@@ -260,6 +277,7 @@ public class MainActivity extends Activity
         protected void onPostExecute(Long result)
         {
             statusView.setText("UGA datasource loaded after " + result / 1000000 + " ms");
+            progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
 
     }
