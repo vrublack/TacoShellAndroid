@@ -24,10 +24,11 @@
                 <span style=\"color: #84b501\">fat</span> and <span style=\"color: #d25310\">protein</span> of total calories.
 
     ]]></string>
+    <string name="datasource">Source:</string>
 
     <string-array name="datasources">
-        <item>USDA</item>
         <item>UGA</item>
+        <item>USDA</item>
     </string-array>
 
 </resources>

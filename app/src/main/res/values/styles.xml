@@ -4,13 +4,18 @@
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <!-- Customize your theme here. -->
 
+        <item name="android:actionBarStyle">@style/ActionBarStyle</item>
 
 
     </style>
 
     <style name="SearchViewTheme"></style>
 
+    <style name="ActionBarStyle" parent="@android:style/Widget.Material.ActionBar.Solid">
 
+        <item name="android:background">@color/colorPrimary</item>
+
+    </style>
 
 
 </resources>

@@ -79,7 +79,7 @@ public class MainActivity extends Activity
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                if (position == 0)
+                if (position == 1)
                 {
                     statusView.setText(getString(R.string.loading_db));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
@@ -233,7 +233,7 @@ public class MainActivity extends Activity
 
         protected void onPostExecute(Long result)
         {
-            statusView.setText("DB loaded after " + result / 1000000 + " ms");
+            statusView.setText("DB loaded after " + result / 1000000000  + " s");
 
             progressBar.setVisibility(ProgressBar.INVISIBLE);
 
@@ -276,7 +276,7 @@ public class MainActivity extends Activity
 
         protected void onPostExecute(Long result)
         {
-            statusView.setText("UGA datasource loaded after " + result / 1000000 + " ms");
+            statusView.setText("UGA datasource loaded after " + result / 1000000000 + " s");
             progressBar.setVisibility(ProgressBar.INVISIBLE);
         }
 
