@@ -70,8 +70,18 @@ public class MacroNutrientChart extends View
         canvas.drawArc(rect, 360 * carbs + 360 * fat, 360 * protein, true, proteinPaint);
     }
 
+    /**
+     *
+     * @param carbs Grams of carbs
+     * @param fat Grams of fat
+     * @param protein Grams of protein
+     */
     public void setBreakdown(float carbs, float fat, float protein)
     {
+        carbs *= 4;
+        fat *= 9;
+        protein *= 4;
+
         float total = carbs + fat + protein;
 
         this.carbs = carbs / total;
