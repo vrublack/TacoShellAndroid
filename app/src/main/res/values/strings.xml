@@ -16,7 +16,7 @@
                 <li>Name of a dining hall (if selected UGA)</li>
                 <br/>
                 <li><span style=\"font-style: italic;\">{high, low} x {calories, carbs, fat, protein, fiber}</span>, for example \"high protein\".
-                The items will then be sorted by that criterion.</li>
+                All items sorted by that criterion will be shown.</li>
 
                 </ul>
 

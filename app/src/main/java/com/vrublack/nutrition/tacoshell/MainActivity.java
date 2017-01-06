@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
@@ -28,7 +29,9 @@ import com.vrublack.nutrition.core.TextMatrix;
 import com.vrublack.nutrition.core.uga.UGAFoodServices;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MainActivity extends Activity
 {
@@ -84,8 +87,7 @@ public class MainActivity extends Activity
                     statusView.setText(getString(R.string.loading_db));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
                     new LoadDBTask().execute();
-                }
-                else
+                } else
                 {
                     statusView.setText(getString(R.string.loading_uga));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
@@ -144,6 +146,33 @@ public class MainActivity extends Activity
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
 
+        menu.getItem(0).setOnActionExpandListener(new MenuItem.OnActionExpandListener()
+        {
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item)
+            {
+                if (!showingList)
+                {
+                    showingList = true;
+                    switcher.setDisplayedChild(1);
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item)
+            {
+                if (showingList)
+                {
+                    switcher.setDisplayedChild(0);
+                    showingList = false;
+                }
+
+                return true;
+            }
+        });
+
         // Associate searchable configuration with the SearchView
         SearchManager searchManager =
                 (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -154,6 +183,8 @@ public class MainActivity extends Activity
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
         {
+            private String sortingQueries = "";
+
             @Override
             public boolean onQueryTextSubmit(String query)
             {
@@ -166,12 +197,6 @@ public class MainActivity extends Activity
             {
                 if (s.length() == 0)
                     return false;
-
-                if (!showingList)
-                {
-                    showingList = true;
-                    switcher.setDisplayedChild(1);
-                }
 
                 if (!queryRunning)
                 {
@@ -188,12 +213,6 @@ public class MainActivity extends Activity
     @Override
     public void onBackPressed()
     {
-        if (showingList)
-        {
-            switcher.setDisplayedChild(0);
-            showingList = false;
-        }
-
         super.onBackPressed();
     }
 
@@ -233,7 +252,7 @@ public class MainActivity extends Activity
 
         protected void onPostExecute(Long result)
         {
-            statusView.setText("DB loaded after " + result / 1000000000  + " s");
+            statusView.setText("DB loaded after " + result / 1000000000 + " s");
 
             progressBar.setVisibility(ProgressBar.INVISIBLE);
 
