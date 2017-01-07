@@ -12,11 +12,7 @@
                 <ul>
 
                 <li>Name of a food item (duh)</li>
-                <br/>
                 <li>Name of a dining hall (if selected UGA)</li>
-                <br/>
-                <li><span style=\"font-style: italic;\">{high, low} x {calories, carbs, fat, protein, fiber}</span>, for example \"high protein\".
-                All items sorted by that criterion will be shown.</li>
 
                 </ul>
 
@@ -25,6 +21,7 @@
 
     ]]></string>
     <string name="datasource">Source:</string>
+    <string name="wait_loading">Still loading…</string>
 
     <string-array name="datasources">
         <item>UGA</item>

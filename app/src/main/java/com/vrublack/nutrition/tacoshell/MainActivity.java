@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.vrublack.nutrition.core.Formatter;
@@ -86,11 +87,13 @@ public class MainActivity extends Activity
                 {
                     statusView.setText(getString(R.string.loading_db));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
+                    datasourceSpinner.setEnabled(false);
                     new LoadDBTask().execute();
                 } else
                 {
                     statusView.setText(getString(R.string.loading_uga));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
+                    datasourceSpinner.setEnabled(false);
                     new LoadUGATask().execute();
                 }
             }
@@ -151,6 +154,13 @@ public class MainActivity extends Activity
             @Override
             public boolean onMenuItemActionExpand(MenuItem item)
             {
+                // shouldn't expand when datasource is currently loading
+                if (progressBar.getVisibility() == ProgressBar.VISIBLE)
+                {
+                    Toast.makeText(MainActivity.this, getString(R.string.wait_loading), Toast.LENGTH_SHORT).show();
+                    return false;
+                }
+
                 if (!showingList)
                 {
                     showingList = true;
@@ -255,6 +265,7 @@ public class MainActivity extends Activity
             statusView.setText("DB loaded after " + result / 1000000000 + " s");
 
             progressBar.setVisibility(ProgressBar.INVISIBLE);
+            datasourceSpinner.setEnabled(true);
 
             /*
             int iterations = 10;
@@ -297,6 +308,7 @@ public class MainActivity extends Activity
         {
             statusView.setText("UGA datasource loaded after " + result / 1000000000 + " s");
             progressBar.setVisibility(ProgressBar.INVISIBLE);
+            datasourceSpinner.setEnabled(true);
         }
 
     }
