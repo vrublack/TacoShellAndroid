@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TacoShell</string>
     <string name="loading_db">Loading DB…</string>
-    <string name="loading_uga">Scraping UGA website…</string>
+    <string name="loading_uga">Loading from UGA website…</string>
     <string name="search_hint">Search food</string>
     <string name="search_title">Search for foods</string>
     <string name="instructions"><![CDATA[
@@ -11,7 +11,7 @@
 
                 <ul>
 
-                <li>Name of a food item (duh)</li>
+                <li>Name of a food item <span style=\"font-style: italic;\">(duh!)</span></li>
                 <li>Name of a dining hall (if selected UGA)</li>
 
                 </ul>
