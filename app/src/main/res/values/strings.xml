@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">TacoShell</string>
     <string name="loading_db">Loading DB…</string>
-    <string name="loading_uga">Loading from UGA website…</string>
+    <string name="loading_uga">Loading UGA food data…</string>
     <string name="search_hint">Search food</string>
     <string name="search_title">Search for foods</string>
     <string name="instructions"><![CDATA[
@@ -18,6 +18,11 @@
 
                 The pie chart shows the percentage of <span style=\"color: #30408d\">carbs</span>,
                 <span style=\"color: #84b501\">fat</span> and <span style=\"color: #d25310\">protein</span> of total calories.
+
+                <br/>
+                <br/>
+
+                You can take a look at the source code on my <a href="https://github.com/vrublack/TacoShellAndroid">Github</a>
 
     ]]></string>
     <string name="datasource">Source:</string>
