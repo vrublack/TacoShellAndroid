@@ -299,14 +299,17 @@ public class MainActivity extends Activity
         {
             long start = System.nanoTime();
             final float interval = 0.05f;
-            dataSource = new UGAFoodServices();
+            dataSource = new CachedUGAFoodServices(MainActivity.this);
             return System.nanoTime() - start;
         }
 
 
         protected void onPostExecute(Long result)
         {
-            statusView.setText("UGA datasource loaded after " + result / 1000000000 + " s");
+            if (((CachedUGAFoodServices) dataSource).usedCache())
+                statusView.setText("UGA items loaded after " + result / 1000000000 + " s (cached)");
+            else
+                statusView.setText("UGA items loaded after " + result / 1000000000 + " s (from website)");
             progressBar.setVisibility(ProgressBar.INVISIBLE);
             datasourceSpinner.setEnabled(true);
         }
