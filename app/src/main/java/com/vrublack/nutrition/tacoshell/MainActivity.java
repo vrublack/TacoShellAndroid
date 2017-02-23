@@ -34,8 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends Activity
-{
+public class MainActivity extends Activity {
     private SyncFoodDataSource dataSource;
 
     private List<SearchResultItem> queryResult;
@@ -53,8 +52,7 @@ public class MainActivity extends Activity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
@@ -78,19 +76,15 @@ public class MainActivity extends Activity
 
         datasourceSpinner = (Spinner) findViewById(R.id.spinner);
 
-        datasourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
+        datasourceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                if (position == 1)
-                {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
                     statusView.setText(getString(R.string.loading_db));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
                     datasourceSpinner.setEnabled(false);
                     new LoadDBTask().execute();
-                } else
-                {
+                } else {
                     statusView.setText(getString(R.string.loading_uga));
                     progressBar.setVisibility(ProgressBar.VISIBLE);
                     datasourceSpinner.setEnabled(false);
@@ -99,8 +93,7 @@ public class MainActivity extends Activity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
@@ -116,8 +109,7 @@ public class MainActivity extends Activity
     }
 
 
-    private String printSearchResults(List<SearchResultItem> results)
-    {
+    private String printSearchResults(List<SearchResultItem> results) {
         Formatter formatter = new com.vrublack.nutrition.tacoshell.TextFormatter();
 
         // max amount of entries that will be shown to the user (upon request)
@@ -134,8 +126,7 @@ public class MainActivity extends Activity
         final int matrixWidth = 3;
         TextMatrix matrix = new TextMatrix(matrixWidth, matrixHeight);
         matrix.setRow(0, new String[]{"", "DESCRIPTION", "POPULARITY"});
-        for (int i = 0; i < entryLimit; i++)
-        {
+        for (int i = 0; i < entryLimit; i++) {
             float scaledPopularity = 100 * percentileScale.getPercentile(results.get(i).getRelativePopularity());
             matrix.setRow(i + 1, new String[]{"[" + (i + 1) + "]", results.get(i).toString(), formatter.formatPopularity(scaledPopularity)});
         }
@@ -144,25 +135,20 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
 
-        menu.getItem(0).setOnActionExpandListener(new MenuItem.OnActionExpandListener()
-        {
+        menu.getItem(0).setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
-            public boolean onMenuItemActionExpand(MenuItem item)
-            {
+            public boolean onMenuItemActionExpand(MenuItem item) {
                 // shouldn't expand when datasource is currently loading
-                if (progressBar.getVisibility() == ProgressBar.VISIBLE)
-                {
+                if (progressBar.getVisibility() == ProgressBar.VISIBLE) {
                     Toast.makeText(MainActivity.this, getString(R.string.wait_loading), Toast.LENGTH_SHORT).show();
                     return false;
                 }
 
-                if (!showingList)
-                {
+                if (!showingList) {
                     showingList = true;
                     switcher.setDisplayedChild(1);
                 }
@@ -171,10 +157,8 @@ public class MainActivity extends Activity
             }
 
             @Override
-            public boolean onMenuItemActionCollapse(MenuItem item)
-            {
-                if (showingList)
-                {
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                if (showingList) {
                     switcher.setDisplayedChild(0);
                     showingList = false;
                 }
@@ -191,25 +175,21 @@ public class MainActivity extends Activity
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener()
-        {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             private String sortingQueries = "";
 
             @Override
-            public boolean onQueryTextSubmit(String query)
-            {
+            public boolean onQueryTextSubmit(String query) {
                 hideKeyboard();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String s)
-            {
+            public boolean onQueryTextChange(String s) {
                 if (s.length() == 0)
                     return false;
 
-                if (!queryRunning)
-                {
+                if (!queryRunning) {
                     new QueryTask().execute(s);
                 }
 
@@ -221,36 +201,29 @@ public class MainActivity extends Activity
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         super.onBackPressed();
     }
 
-    private void hideKeyboard()
-    {
+    private void hideKeyboard() {
         View view = this.getCurrentFocus();
-        if (view != null)
-        {
+        if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
 
-    private class LoadDBTask extends AsyncTask<Void, Long, Long>
-    {
+    private class LoadDBTask extends AsyncTask<Void, Long, Long> {
         private long progress = 0;
 
         @Override
-        protected Long doInBackground(Void... params)
-        {
+        protected Long doInBackground(Void... params) {
             long start = System.nanoTime();
             final float interval = 0.05f;
-            dataSource = AndroidUSDADatabase.newDatabase(getResources(), new Runnable()
-            {
+            dataSource = AndroidUSDADatabase.newDatabase(getResources(), new Runnable() {
                 @Override
-                public void run()
-                {
+                public void run() {
                     progress++;
 
                     publishProgress((long) (progress * interval * 100));
@@ -260,8 +233,7 @@ public class MainActivity extends Activity
         }
 
 
-        protected void onPostExecute(Long result)
-        {
+        protected void onPostExecute(Long result) {
             statusView.setText("DB loaded after " + result / 1000000000 + " s");
 
             progressBar.setVisibility(ProgressBar.INVISIBLE);
@@ -282,45 +254,35 @@ public class MainActivity extends Activity
         }
 
         @Override
-        protected void onProgressUpdate(Long... values)
-        {
+        protected void onProgressUpdate(Long... values) {
             super.onProgressUpdate(values);
 
             statusView.setText(values[0] + " % loaded");
         }
     }
 
-    private class LoadUGATask extends AsyncTask<Void, Long, Long>
-    {
+    private class LoadUGATask extends AsyncTask<Void, Long, Long> {
         private long progress = 0;
 
         @Override
-        protected Long doInBackground(Void... params)
-        {
+        protected Long doInBackground(Void... params) {
             long start = System.nanoTime();
             final float interval = 0.05f;
-            dataSource = new CachedUGAFoodServices(MainActivity.this);
+            dataSource = new UGAFoodServices(MainActivity.this.getResources().openRawResource(R.raw.uga_cached));
             return System.nanoTime() - start;
         }
 
-
-        protected void onPostExecute(Long result)
-        {
-            if (((CachedUGAFoodServices) dataSource).usedCache())
-                statusView.setText("UGA items loaded after " + result / 1000000000 + " s (cached)");
-            else
-                statusView.setText("UGA items loaded after " + result / 1000000000 + " s (from website)");
+        protected void onPostExecute(Long result) {
+            statusView.setText("UGA items loaded after " + result / 1000000000 + " s (cached)");
             progressBar.setVisibility(ProgressBar.INVISIBLE);
             datasourceSpinner.setEnabled(true);
         }
 
     }
 
-    private class QueryTask extends AsyncTask<String, Void, Void>
-    {
+    private class QueryTask extends AsyncTask<String, Void, Void> {
         @Override
-        protected Void doInBackground(String... params)
-        {
+        protected Void doInBackground(String... params) {
             queryRunning = true;
             queryResult = dataSource.search(params[0]);
             queryRunning = false;
@@ -328,8 +290,7 @@ public class MainActivity extends Activity
         }
 
         @Override
-        protected void onPostExecute(Void aVoid)
-        {
+        protected void onPostExecute(Void aVoid) {
             // statusView.setText("Results: " + queryResult.size());
             String formatted = printSearchResults(queryResult);
             // contentView.setText(formatted);
