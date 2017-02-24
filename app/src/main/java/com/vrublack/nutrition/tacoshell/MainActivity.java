@@ -268,7 +268,8 @@ public class MainActivity extends Activity {
         protected Long doInBackground(Void... params) {
             long start = System.nanoTime();
             final float interval = 0.05f;
-            dataSource = new UGAFoodServices(MainActivity.this.getResources().openRawResource(R.raw.uga_cached));
+            dataSource = new UGAFoodServices(MainActivity.this.getResources().openRawResource(R.raw.uga_cached),
+                    MainActivity.this.getResources().openRawResource(R.raw.uga_dict));
             return System.nanoTime() - start;
         }
 
